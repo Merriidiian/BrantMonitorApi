@@ -62,7 +62,7 @@ public class TaskRepository : ITaskRepository
         {
             await using var thisContext = new TaskContext(new DbContextOptions<TaskContext>());
             var updateTask = await thisContext.TaskModel.FindAsync(id);
-            updateTask.Status = "running";
+            updateTask.Status = "finished";
             updateTask.DataTimeTask = DateTimeOffset.Now;
             await thisContext.SaveChangesAsync();
             _logger.LogInformation($"Task {updateTask.Id} is updated 'finished'");
