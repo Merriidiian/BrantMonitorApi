@@ -26,9 +26,9 @@ public class TaskService : ITaskService
         var insertDbResult = await _repository.PostTaskAsync(newTask);
         if (insertDbResult)
         {
-            Task.Run(() => RunningTaskAsync(newTask.Id));
-            Task.Run(() => UpdateTaskStatusAsync(newTask.Id));
             _logger.LogInformation($"Task {newTask.Id} update is delay 2 min");
+            await RunningTaskAsync(newTask.Id);
+            Task.Run(() => UpdateTaskStatusAsync(newTask.Id),new CancellationToken());
             return newTask.Id;
         }
         else
@@ -61,7 +61,6 @@ public class TaskService : ITaskService
 
     private async Task RunningTaskAsync(Guid id)
     {
-        await Task.Delay(1000);
         await _repository.UpdateTaskStatusRunningAsync(id);
     }
 }
