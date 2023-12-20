@@ -27,8 +27,9 @@ public class TaskService : ITaskService
         if (insertDbResult)
         {
             _logger.LogInformation($"Task {newTask.Id} update is delay 2 min");
-            await RunningTaskAsync(newTask.Id);
-            Task.Run(() => UpdateTaskStatusAsync(newTask.Id),new CancellationToken());
+            var token = new CancellationToken();
+            Task.Run(() => RunningTaskAsync(newTask.Id),token);
+            Task.Run(() => UpdateTaskStatusAsync(newTask.Id),token);
             return newTask.Id;
         }
         else
