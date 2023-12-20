@@ -54,7 +54,7 @@ public class TaskService : ITaskService
 
     private async Task UpdateTaskStatus(Guid id)
     {
-        await Task.Delay(60000);
+        await Task.Delay(120000);
         await _repository.UpdateTaskStatus(id);
     }
 }

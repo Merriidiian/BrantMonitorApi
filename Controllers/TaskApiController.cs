@@ -23,7 +23,7 @@ public class TaskApiController : ControllerBase
         try
         {
             var task = await _service.PostTask();
-            return Ok(task);
+            return Accepted(task);
         }
         catch (Exception e)
         {
@@ -42,7 +42,7 @@ public class TaskApiController : ControllerBase
             {
                 return BadRequest();
             }
-            return Accepted(Ok(taskStatus).Value);
+            return Ok(taskStatus);
         }
         catch (Exception e)
         {
