@@ -14,7 +14,7 @@ public class TaskService : ITaskService
         _logger = logger;
     }
 
-    public async Task<Guid> PostTask()
+    public async Task<Guid> PostTaskAsync()
     {
         var newTask = new TaskModel
         {
@@ -23,10 +23,11 @@ public class TaskService : ITaskService
             Status = "created"
         };
         _logger.LogInformation($"New task is created : {Newtonsoft.Json.JsonConvert.SerializeObject(newTask)}");
-        var insertDbResult = await _repository.PostTask(newTask);
+        var insertDbResult = await _repository.PostTaskAsync(newTask);
         if (insertDbResult)
         {
-            Task.Run(() => UpdateTaskStatus(newTask.Id));
+            Task.Run(() => RunningTaskAsync(newTask.Id));
+            Task.Run(() => UpdateTaskStatusAsync(newTask.Id));
             _logger.LogInformation($"Task {newTask.Id} update is delay 2 min");
             return newTask.Id;
         }
@@ -36,14 +37,14 @@ public class TaskService : ITaskService
         }
     }
 
-    public async Task<string> GetTask(string id)
+    public async Task<string> GetTaskAsync(string id)
     {
         var guidId = Guid.Empty;
         var guidIsValid = Guid.TryParse(id, out guidId);
         if (guidIsValid)
         {
             _logger.LogInformation("Guid is valid");
-            return await _repository.GetTask(guidId);
+            return await _repository.GetTaskAsync(guidId);
         }
         else
         {
@@ -52,9 +53,15 @@ public class TaskService : ITaskService
         }
     }
 
-    private async Task UpdateTaskStatus(Guid id)
+    private async Task UpdateTaskStatusAsync(Guid id)
     {
         await Task.Delay(120000);
-        await _repository.UpdateTaskStatus(id);
+        await _repository.UpdateTaskStatusFinishAsync(id);
+    }
+
+    private async Task RunningTaskAsync(Guid id)
+    {
+        await Task.Delay(1000);
+        await _repository.UpdateTaskStatusRunningAsync(id);
     }
 }

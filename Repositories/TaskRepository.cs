@@ -15,7 +15,7 @@ public class TaskRepository : ITaskRepository
         _logger = logger;
     }
 
-    public async Task<bool> PostTask(TaskModel taskModel)
+    public async Task<bool> PostTaskAsync(TaskModel taskModel)
     {
         try
         {
@@ -32,21 +32,40 @@ public class TaskRepository : ITaskRepository
         }
     }
 
-    public async Task<string?> GetTask(Guid id)
+    public async Task<string?> GetTaskAsync(Guid id)
     {
         return _context.TaskModel.Find(id).Status;
     }
 
-    public async Task<bool> UpdateTaskStatus(Guid id)
+    public async Task<bool> UpdateTaskStatusRunningAsync(Guid id)
     {
         try
         {
             await using var thisContext = new TaskContext(new DbContextOptions<TaskContext>());
             var updateTask = await thisContext.TaskModel.FindAsync(id);
-            updateTask.Status = "finished";
+            updateTask.Status = "running";
             updateTask.DataTimeTask = DateTimeOffset.Now;
             await thisContext.SaveChangesAsync();
-            _logger.LogInformation($"Task {updateTask.Id} is updated");
+            _logger.LogInformation($"Task {updateTask.Id} is updated 'running'");
+            await thisContext.DisposeAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogInformation($"Update task is error: {e.StackTrace}");
+            return false;
+        }
+    }
+    public async Task<bool> UpdateTaskStatusFinishAsync(Guid id)
+    {
+        try
+        {
+            await using var thisContext = new TaskContext(new DbContextOptions<TaskContext>());
+            var updateTask = await thisContext.TaskModel.FindAsync(id);
+            updateTask.Status = "running";
+            updateTask.DataTimeTask = DateTimeOffset.Now;
+            await thisContext.SaveChangesAsync();
+            _logger.LogInformation($"Task {updateTask.Id} is updated 'finished'");
             await thisContext.DisposeAsync();
             return true;
         }

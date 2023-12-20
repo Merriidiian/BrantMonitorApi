@@ -2,6 +2,6 @@
 
 public interface ITaskService
 {
-    Task<Guid> PostTask();
-    Task<string> GetTask(string id);
+    Task<Guid> PostTaskAsync();
+    Task<string> GetTaskAsync(string id);
 }

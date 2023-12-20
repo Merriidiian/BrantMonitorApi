@@ -22,7 +22,7 @@ public class TaskApiController : ControllerBase
     {
         try
         {
-            var task = await _service.PostTask();
+            var task = await _service.PostTaskAsync();
             return Accepted(task);
         }
         catch (Exception e)
@@ -37,7 +37,7 @@ public class TaskApiController : ControllerBase
     {
         try
         {
-            var taskStatus = await _service.GetTask(id);
+            var taskStatus = await _service.GetTaskAsync(id);
             if (taskStatus == "400")
             {
                 return BadRequest();
